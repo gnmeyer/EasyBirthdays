@@ -3,7 +3,7 @@ import 'package:easy_birthdays/home.dart';
 
 void main() {
   runApp(const MaterialApp(
-    title: 'Navigation Basics',
+    title: 'Easy Birthdays',
     home: HomeRoute(),
   ));
 }
