@@ -14,13 +14,6 @@ class EventsRoute extends StatelessWidget {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         ElevatedButton(
           onPressed: () {
-            // Navigate back to first route when tapped.
-            Navigator.pop(context);
-          },
-          child: const Text('Home Page'),
-        ),
-        ElevatedButton(
-          onPressed: () {
             // Navigate to edit page
             Navigator.push(
               context,
