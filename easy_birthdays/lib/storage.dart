@@ -4,13 +4,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
-const double eventBudget = 00;
-// const Date eventDate =
-const String eventTitle = 'userTable';
-// Map<String, double> eventShop;
+const double eventBudget = -1;
+const String eventTitle = 'null';
+//Timestamp object from Timestamp class
+DateTime eventDate =
+    DateTime(2039, 12, 31, 19, 23, 59, 59); // December 31, 2039, 11:59 PM
 
-// const var shoppingItems = List<List<String>>;
-// const var Date = 'date';
+Map<String, double> eventShop = {
+  'null': -1,
+};
 
 class EventStorage {
   bool _initialized = false;
