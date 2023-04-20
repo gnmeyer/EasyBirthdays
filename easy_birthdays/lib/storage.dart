@@ -4,16 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
-const double eventBudget = -1;
-const String eventTitle = 'null';
-//Timestamp object from Timestamp class
-DateTime eventDate =
-    DateTime(2039, 12, 31, 19, 23, 59, 59); // December 31, 2039, 11:59 PM
-
-Map<String, double> eventShop = {
-  'null': -1,
-};
-
 class EventStorage {
   bool _initialized = false;
 
@@ -27,6 +17,30 @@ class EventStorage {
 
   bool get isInitialized => _initialized;
 
+  Future<void> writeEventInfo(double eventBudget, String eventTitle,
+      DateTime eventDate, Map eventShop) async {
+    if (!isInitialized) {
+      await initializeDefault();
+    }
+
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    firestore.collection('events').doc('Xxm2R15vAKqAObtsedaV').set({
+      'eventBudget': eventBudget,
+      'eventTitle': eventTitle,
+      'eventDate': eventDate,
+      'eventShop': eventShop,
+    }).then((value) {
+      if (kDebugMode) {
+        print('event updated successfully');
+      }
+    }).catchError((error) {
+      if (kDebugMode) {
+        print('writeEventInfo error: $error');
+      }
+    });
+  }
+
   Future<void> writeUserInfo(String username) async {
     if (!isInitialized) {
       await initializeDefault();
@@ -34,8 +48,8 @@ class EventStorage {
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    firestore.collection('users').doc('cins467').set({
-      'Username': username,
+    firestore.collection('events').doc('qhV6Lq26TdEPuR97yZDt').set({
+      'Name': username,
     }).then((value) {
       if (kDebugMode) {
         print('user updated successfully');

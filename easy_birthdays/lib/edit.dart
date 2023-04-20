@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_birthdays/main.dart';
+import 'package:easy_birthdays/storage.dart';
 
 class EditRoute extends StatelessWidget {
   const EditRoute({super.key});
@@ -30,12 +31,42 @@ class MyCustomForm extends StatefulWidget {
 // Define a corresponding State class.
 // This class holds data related to the form.
 class MyCustomFormState extends State<MyCustomForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+
+  //Text field
+  final _eventBudgetController = TextEditingController();
+  final _eventTitleController = TextEditingController();
+  final _eventDateController = TextEditingController();
+  final _eventShopController = TextEditingController();
+
+  final EventStorage _eventStorage = EventStorage();
+
+  Future<void> _submitForm() async {
+    final formData = _formKey.currentState;
+
+    if (formData != null) {
+      if (formData.validate()) {
+        // Get the current text values of the form fields
+        final String eventTitle = _eventTitleController.text;
+        final DateTime eventDate = DateTime.parse(_eventDateController.text);
+        final Map<String, double> eventShop = _eventShopController.text
+            .split(',')
+            .asMap()
+            .map((index, value) =>
+                MapEntry('Item ${index + 1}', double.parse(value)));
+        final double eventBudget =
+            double.tryParse(_eventBudgetController.text) ?? 0;
+
+        // Write the form data to Firestore using the EventStorage class
+        await _eventStorage.writeEventInfo(
+          eventBudget,
+          eventTitle,
+          eventDate,
+          eventShop,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +77,7 @@ class MyCustomFormState extends State<MyCustomForm> {
         children: <Widget>[
           // Add TextFormFields and ElevatedButton here.
           TextFormField(
+            controller: _eventTitleController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter an event name',
@@ -59,6 +91,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           TextFormField(
+            controller: _eventDateController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter an event date',
@@ -72,6 +105,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           TextFormField(
+            controller: _eventShopController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter an item name',
@@ -85,6 +119,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           TextFormField(
+            controller: _eventBudgetController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter event budget',
@@ -98,16 +133,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           ElevatedButton(
-            onPressed: () {
-              // Validate returns true if the form is valid, or false otherwise.
-              if (_formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
-              }
-            },
+            onPressed: _submitForm,
             child: const Text('Submit'),
           ),
         ],

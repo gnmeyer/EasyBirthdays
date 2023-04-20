@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:easy_birthdays/main.dart';
+import 'package:easy_birthdays/storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+
+import 'firebase_options.dart';
 
 class CreateRoute extends StatelessWidget {
   const CreateRoute({super.key});
@@ -31,87 +37,42 @@ class MyCustomForm extends StatefulWidget {
 // Define a corresponding State class.
 // This class holds data related to the form.
 class MyCustomFormState extends State<MyCustomForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
+  final EventStorage _storage = EventStorage();
+  late Future<String> _username;
+  final _usernameController = TextEditingController();
+
+  Future<void> _setName() async {
+    final String username = _usernameController.text;
+    await _storage.writeUserInfo(username);
+  }
 
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          // Add TextFormFields and ElevatedButton here.
-          TextFormField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter an event name',
+    return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text("Test"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter your username',
+                  hintText: 'username'),
             ),
-            // The validator receives the text that the user has entered.
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter an event name';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter an event date',
-            ),
-            // The validator receives the text that the user has entered.
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a date';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter an item name',
-            ),
-            // The validator receives the text that the user has entered.
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter an item name';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter event budget',
-            ),
-            // The validator receives the text that the user has entered.
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a number';
-              }
-              return null;
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Validate returns true if the form is valid, or false otherwise.
-              if (_formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Creating Event...')),
-                );
-              }
-            },
-            child: const Text('Create'),
-          ),
-        ],
+            ElevatedButton(
+                onPressed: () {
+                  _setName();
+                },
+                child: const Text('Submit')),
+          ],
+        ),
       ),
     );
   }
