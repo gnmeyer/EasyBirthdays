@@ -28,16 +28,23 @@ class _CreateRouteState extends State<CreateRoute> {
   void submitForm() async {
     name = _eventTitleController.text;
     pass = _eventDateController.text;
-    String eventTitle = _eventTitleController.text;
-    double eventBudget = double.tryParse(_eventBudgetController.text) ?? 0;
-    DateTime eventDate = DateTime.parse(_eventDateController.text);
-    Map<String, double> eventShop = _eventShopController.text
-        .split(',')
-        .asMap()
-        .map((index, value) =>
-            MapEntry('Item ${index + 1}', double.parse(value)));
+    // String eventTitle = _eventTitleController.text;
+    // double eventBudget = double.tryParse(_eventBudgetController.text) ?? 0;
+    // DateTime eventDate = DateTime.parse(_eventDateController.text);
+    // Map<String, double> eventShop = _eventShopController.text
+    //     .split(',')
+    //     .asMap()
+    //     .map((index, value) =>
+    //         MapEntry('Item ${index + 1}', double.parse(value)));
 
     if (_formKey.currentState!.validate()) {
+      // final eventData = {
+      //   'eventTitle': eventTitle,
+      //   'eventBudget': eventBudget,
+      //   'eventShop': eventShop,
+      //   'eventDate': eventDate,
+      // };
+
       final eventData = {
         'name': name,
         'pass': pass,
@@ -114,6 +121,7 @@ class _CreateRouteState extends State<CreateRoute> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  submitForm();
                   // Validate returns true if the form is valid, or false otherwise.
                   if (_formKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,

@@ -17,36 +17,36 @@ class EventsRoute extends StatelessWidget {
       ),
       body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('events').snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
+        // StreamBuilder<QuerySnapshot>(
+        //   stream: FirebaseFirestore.instance.collection('events').snapshots(),
+        //   builder:
+        //       (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        //     if (snapshot.hasError) {
+        //       return Text('Error: ${snapshot.error}');
+        //     }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...');
-            }
-            return ListView(
-              children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                Map<String, dynamic> data =
-                    document.data() as Map<String, dynamic>;
-                return ListTile(
-                  title: Text(data['eventTitle']),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Date: ${data['eventDate']}'),
-                      Text('Budget: ${data['eventBudget']}'),
-                      Text('Shop: ${data['eventShop']}'),
-                    ],
-                  ),
-                );
-              }).toList(),
-            );
-          },
-        ),
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return const Text('Loading...');
+        //     }
+        //     return ListView(
+        //       children: snapshot.data!.docs.map((DocumentSnapshot document) {
+        //         Map<String, dynamic> data =
+        //             document.data() as Map<String, dynamic>;
+        //         return ListTile(
+        //           title: Text(data['eventTitle']),
+        //           subtitle: Column(
+        //             crossAxisAlignment: CrossAxisAlignment.start,
+        //             children: [
+        //               Text('Date: ${data['eventDate']}'),
+        //               Text('Budget: ${data['eventBudget']}'),
+        //               Text('Shop: ${data['eventShop']}'),
+        //             ],
+        //           ),
+        //         );
+        //       }).toList(),
+        //     );
+        //   },
+        // ),
         ElevatedButton(
           onPressed: () {
             // Navigate to edit page
