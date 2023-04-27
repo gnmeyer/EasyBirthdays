@@ -17,36 +17,27 @@ class EventsRoute extends StatelessWidget {
       ),
       body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        // StreamBuilder<QuerySnapshot>(
-        //   stream: FirebaseFirestore.instance.collection('events').snapshots(),
-        //   builder:
-        //       (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        //     if (snapshot.hasError) {
-        //       return Text('Error: ${snapshot.error}');
-        //     }
+        StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('events').snapshots(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case (ConnectionState.waiting):
+                return const CircularProgressIndicator();
 
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return const Text('Loading...');
-        //     }
-        //     return ListView(
-        //       children: snapshot.data!.docs.map((DocumentSnapshot document) {
-        //         Map<String, dynamic> data =
-        //             document.data() as Map<String, dynamic>;
-        //         return ListTile(
-        //           title: Text(data['eventTitle']),
-        //           subtitle: Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: [
-        //               Text('Date: ${data['eventDate']}'),
-        //               Text('Budget: ${data['eventBudget']}'),
-        //               Text('Shop: ${data['eventShop']}'),
-        //             ],
-        //           ),
-        //         );
-        //       }).toList(),
-        //     );
-        //   },
-        // ),
+              default:
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData) {
+                  return Container();
+                } else if (snapshot.data!.docs.length < 2) {
+                  return Text('Not enough data');
+                } else {
+                  return Text(
+                      'Event Name: ${snapshot.data!.docs[1]["EventName"]}\nEvent Date: ${snapshot.data!.docs[1]["EventDate"]}');
+                }
+            }
+          },
+        ),
         ElevatedButton(
           onPressed: () {
             // Navigate to edit page

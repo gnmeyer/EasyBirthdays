@@ -25,8 +25,13 @@ class _CreateRouteState extends State<CreateRoute> {
   late String name;
   late String pass;
 
+  late String event_id;
+  late String event_date;
+
   void submitForm() async {
     name = _eventTitleController.text;
+    event_id = _eventTitleController.text;
+    event_date = _eventDateController.text;
     pass = _eventDateController.text;
     // String eventTitle = _eventTitleController.text;
     // double eventBudget = double.tryParse(_eventBudgetController.text) ?? 0;
@@ -46,11 +51,18 @@ class _CreateRouteState extends State<CreateRoute> {
       // };
 
       final eventData = {
-        'name': name,
-        'pass': pass,
+        // 'name': name,
+        // 'pass': pass,
+        'EventName': event_id,
+        'EventDate': event_date,
       };
-      await _eventStorage.collection('events').add(eventData);
+      await _eventStorage.collection('events').doc(event_id).set(eventData);
     }
+  }
+
+  void deleteEvent() async {
+    event_id = _eventTitleController.text;
+    _eventStorage.collection('events').doc(event_id).delete();
   }
 
   @override
@@ -131,7 +143,22 @@ class _CreateRouteState extends State<CreateRoute> {
                     );
                   }
                 },
-                child: const Text('Submit'),
+                child: const Text('Create Event'),
+              ),
+
+              ElevatedButton(
+                onPressed: () {
+                  deleteEvent();
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Deleting Event')),
+                    );
+                  }
+                },
+                child: const Text('Delete Event'),
               ),
             ],
           ),
