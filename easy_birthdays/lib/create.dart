@@ -1,9 +1,10 @@
-import 'dart:html';
-
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_birthdays/settings.dart';
+import 'package:easy_birthdays/color_provider.dart';
+import 'package:provider/provider.dart';
 
 class CreateRoute extends StatefulWidget {
   const CreateRoute({Key? key}) : super(key: key);
@@ -22,39 +23,27 @@ class _CreateRouteState extends State<CreateRoute> {
   final _eventDateController = TextEditingController();
   final _eventShopController = TextEditingController();
 
-  late String name;
-  late String pass;
-
   late String event_id;
   late String event_date;
+  late String event_budget;
 
   void submitForm() async {
-    name = _eventTitleController.text;
     event_id = _eventTitleController.text;
     event_date = _eventDateController.text;
-    pass = _eventDateController.text;
-    // String eventTitle = _eventTitleController.text;
-    // double eventBudget = double.tryParse(_eventBudgetController.text) ?? 0;
-    // DateTime eventDate = DateTime.parse(_eventDateController.text);
-    // Map<String, double> eventShop = _eventShopController.text
-    //     .split(',')
-    //     .asMap()
-    //     .map((index, value) =>
-    //         MapEntry('Item ${index + 1}', double.parse(value)));
+    event_budget = _eventBudgetController.text;
+
+    Map<String, String> eventShop = _eventShopController.text
+        .split(',')
+        .asMap()
+        .map((index, value) => MapEntry('Item ${index + 1}', value.trim()))
+        .cast<String, String>();
 
     if (_formKey.currentState!.validate()) {
-      // final eventData = {
-      //   'eventTitle': eventTitle,
-      //   'eventBudget': eventBudget,
-      //   'eventShop': eventShop,
-      //   'eventDate': eventDate,
-      // };
-
       final eventData = {
-        // 'name': name,
-        // 'pass': pass,
         'EventName': event_id,
         'EventDate': event_date,
+        'EventShop': eventShop,
+        'EventBudget': event_budget,
       };
       await _eventStorage.collection('events').doc(event_id).set(eventData);
     }
@@ -68,7 +57,11 @@ class _CreateRouteState extends State<CreateRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('create event')),
+        appBar: AppBar(
+          title: Text('create event'),
+          backgroundColor: Provider.of<ColorProvider>(context)
+              .colorSetting, // set the background color of the app bar
+        ),
         body: Center(
             child: Form(
           key: _formKey,
@@ -78,7 +71,11 @@ class _CreateRouteState extends State<CreateRoute> {
               TextFormField(
                 controller: _eventTitleController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color:
+                            Provider.of<ColorProvider>(context).colorSetting),
+                  ),
                   hintText: 'Enter an event name',
                 ),
                 // The validator receives the text that the user has entered.
@@ -92,7 +89,11 @@ class _CreateRouteState extends State<CreateRoute> {
               TextFormField(
                 controller: _eventDateController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color:
+                            Provider.of<ColorProvider>(context).colorSetting),
+                  ),
                   hintText: 'Enter an event date',
                 ),
                 // The validator receives the text that the user has entered.
@@ -106,7 +107,11 @@ class _CreateRouteState extends State<CreateRoute> {
               TextFormField(
                 controller: _eventShopController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color:
+                            Provider.of<ColorProvider>(context).colorSetting),
+                  ),
                   hintText: 'Enter an item name',
                 ),
                 // The validator receives the text that the user has entered.
@@ -120,10 +125,13 @@ class _CreateRouteState extends State<CreateRoute> {
               TextFormField(
                 controller: _eventBudgetController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Provider.of<ColorProvider>(context)
+                            .colorSetting), // set border color here
+                  ),
                   hintText: 'Enter event budget',
                 ),
-                // The validator receives the text that the user has entered.
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a number';
@@ -131,6 +139,7 @@ class _CreateRouteState extends State<CreateRoute> {
                   return null;
                 },
               ),
+
               ElevatedButton(
                 onPressed: () {
                   submitForm();
@@ -144,6 +153,10 @@ class _CreateRouteState extends State<CreateRoute> {
                   }
                 },
                 child: const Text('Create Event'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Provider.of<ColorProvider>(context).colorSetting),
+                ),
               ),
 
               ElevatedButton(
@@ -159,6 +172,10 @@ class _CreateRouteState extends State<CreateRoute> {
                   }
                 },
                 child: const Text('Delete Event'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Provider.of<ColorProvider>(context).colorSetting),
+                ),
               ),
             ],
           ),

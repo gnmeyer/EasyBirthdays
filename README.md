@@ -2,3 +2,9 @@
 
 # 4/18/2023
 # forms creation, edit page update, create page creation, storage.dart variables creation
+
+
+#4/30/2023
+# Have not updated in a while. Lots of new features. I created a settings page to change the color of the app. I have to get a new dependency called provider which will rebuild the app each time I change the colorSettings variable.
+
+# Got experience using "Provider". Provider.of<ColorProvider>(context).colorSetting, - We can store global variables using this.

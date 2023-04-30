@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_birthdays/main.dart';
 import 'package:easy_birthdays/events.dart';
 import 'package:easy_birthdays/settings.dart';
+import 'package:provider/provider.dart';
+import 'package:easy_birthdays/color_provider.dart';
 
 class HomeRoute extends StatelessWidget {
   const HomeRoute({Key? key});
@@ -10,7 +12,9 @@ class HomeRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('First Route'),
+        title: const Text('Easy Birthdays'),
+        backgroundColor: Provider.of<ColorProvider>(context)
+            .colorSetting, // set the background color of the app bar
       ),
       body: Center(
         child: Column(
@@ -25,6 +29,10 @@ class HomeRoute extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const EventsRoute()),
                 );
               },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Provider.of<ColorProvider>(context).colorSetting),
+              ),
             ),
             ElevatedButton(
               child: const Text('Settings'),
@@ -36,6 +44,10 @@ class HomeRoute extends StatelessWidget {
                       builder: (context) => const SettingsRoute()),
                 );
               },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Provider.of<ColorProvider>(context).colorSetting),
+              ),
             ),
           ],
         ),
