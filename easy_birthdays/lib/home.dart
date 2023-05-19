@@ -1,3 +1,4 @@
+import 'package:easy_birthdays/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_birthdays/main.dart';
 import 'package:easy_birthdays/events.dart';
@@ -42,6 +43,20 @@ class HomeRoute extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const SettingsRoute()),
+                );
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Provider.of<ColorProvider>(context).colorSetting),
+              ),
+            ),
+            ElevatedButton(
+              child: const Text('Camera'),
+              onPressed: () {
+                // Navigate to second route when tapped.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraRoute()),
                 );
               },
               style: ButtonStyle(

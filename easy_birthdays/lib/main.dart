@@ -6,8 +6,7 @@ import 'color_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // ensure that the widget binding is initialized before calling Firebase.initializeApp.
+  // Print the path to the temp directory
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(

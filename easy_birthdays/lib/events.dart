@@ -22,6 +22,7 @@ class EventsRoute extends StatelessWidget {
     final _eventTitleController = TextEditingController();
     final _eventDateController = TextEditingController();
     final _eventShopController = TextEditingController();
+    final _eventPricesController = TextEditingController();
 
     late String event_id;
     late String event_date;
@@ -38,11 +39,18 @@ class EventsRoute extends StatelessWidget {
           .map((index, value) => MapEntry('Item ${index + 1}', value.trim()))
           .cast<String, String>();
 
+      Map<String, String> eventPrices = _eventPricesController.text
+          .split(',')
+          .asMap()
+          .map((index, value) => MapEntry('Item ${index + 1}', value.trim()))
+          .cast<String, String>();
+
       if (_formKey.currentState!.validate()) {
         final eventData = {
           'EventName': event_id,
           'EventDate': event_date,
           'EventShop': eventShop,
+          'EventPrices': eventPrices,
           'EventBudget': event_budget,
         };
         await _eventStorage.collection('events').doc(event_id).set(eventData);
@@ -86,15 +94,22 @@ class EventsRoute extends StatelessWidget {
                           if (Provider.of<PriceProvider>(context)
                                   .priceSetting ==
                               false) {
-                            return ListTile(
-                                title: Text('${doc["EventName"]}'),
-                                subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('${doc["EventDate"]}'),
-                                    ]));
+                            if (doc.id == '7BBqGscQ0N9tnGO2CVE4') {
+                              return SizedBox.shrink(); // Return a blank widget
+                            } else {
+                              return ListTile(
+                                  title: Text('${doc["EventName"]}'),
+                                  subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('${doc["EventDate"]}'),
+                                      ]));
+                            }
+                          } else if (doc.id == '7BBqGscQ0N9tnGO2CVE4') {
+                            return SizedBox.shrink(); // Return a blank widget
                           } else {
+                            double totalPrice = 0.0;
                             return Card(
                               elevation: 4,
                               shape: RoundedRectangleBorder(
@@ -109,9 +124,17 @@ class EventsRoute extends StatelessWidget {
                                     // Text('Shop: '),
                                     for (final entry
                                         in doc['EventShop'].entries)
-                                      Text('${entry.key} - ${entry.value}'),
-                                    Text(
-                                        'Total Budget: \$${doc["EventBudget"]}'),
+                                      if (entry.value != 'NA')
+                                        (Text('${entry.value}')),
+
+                                    for (final entry
+                                        in doc['EventPrices'].entries)
+                                      if (entry.value != 'NA')
+                                        (Text('\$${entry.value}')),
+
+                                    if (doc["EventBudget"] != 'NA')
+                                      Text(
+                                          'Total Budget: \$${doc["EventBudget"]}'),
                                   ],
                                 ),
                                 trailing: Row(
@@ -123,18 +146,19 @@ class EventsRoute extends StatelessWidget {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              title: Text('Confirm Delete'),
-                                              content: Text(
+                                              title:
+                                                  const Text('Confirm Delete'),
+                                              content: const Text(
                                                   'Are you sure you want to delete this event?'),
                                               actions: <Widget>[
                                                 TextButton(
-                                                  child: Text('No'),
+                                                  child: const Text('No'),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                   },
                                                 ),
                                                 TextButton(
-                                                  child: Text('Yes'),
+                                                  child: const Text('Yes'),
                                                   onPressed: () {
                                                     FirebaseFirestore.instance
                                                         .collection('events')
@@ -184,7 +208,7 @@ class EventsRoute extends StatelessWidget {
                                                                   .colorSetting,
                                                             ),
                                                           ),
-                                                          hintText:
+                                                          labelText:
                                                               '${doc["EventName"]}',
                                                         ),
                                                         // The validator receives the text that the user has entered.
@@ -211,7 +235,7 @@ class EventsRoute extends StatelessWidget {
                                                                   .colorSetting,
                                                             ),
                                                           ),
-                                                          hintText:
+                                                          labelText:
                                                               '${doc["EventDate"]}',
                                                         ),
                                                         // The validator receives the text that the user has entered.
@@ -252,6 +276,33 @@ class EventsRoute extends StatelessWidget {
                                                       ),
                                                       TextFormField(
                                                         controller:
+                                                            _eventPricesController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Provider.of<
+                                                                          ColorProvider>(
+                                                                      context)
+                                                                  .colorSetting,
+                                                            ),
+                                                          ),
+                                                          hintText:
+                                                              'Enter a price',
+                                                        ),
+                                                        // The validator receives the text that the user has entered.
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter a price';
+                                                          }
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      TextFormField(
+                                                        controller:
                                                             _eventBudgetController,
                                                         decoration:
                                                             InputDecoration(
@@ -265,7 +316,7 @@ class EventsRoute extends StatelessWidget {
                                                                   .colorSetting, // set border color here
                                                             ),
                                                           ),
-                                                          hintText:
+                                                          labelText:
                                                               '${doc["EventBudget"]}',
                                                         ),
                                                         validator: (value) {
@@ -378,7 +429,7 @@ class EventsRoute extends StatelessWidget {
                                         .colorSetting,
                                   ),
                                 ),
-                                // hintText: 'Enter an event date',
+                                hintText: 'Enter an event date',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
@@ -397,12 +448,31 @@ class EventsRoute extends StatelessWidget {
                                         .colorSetting,
                                   ),
                                 ),
-                                // hintText: 'Enter an item name',
+                                hintText: 'Enter an item name',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter an item name';
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _eventPricesController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Provider.of<ColorProvider>(context)
+                                        .colorSetting,
+                                  ),
+                                ),
+                                hintText: 'Enter a price',
+                              ),
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a price';
                                 }
                                 return null;
                               },
@@ -416,7 +486,7 @@ class EventsRoute extends StatelessWidget {
                                         .colorSetting, // set border color here
                                   ),
                                 ),
-                                // hintText: 'Enter event budget',
+                                hintText: 'Enter event budget',
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -438,6 +508,7 @@ class EventsRoute extends StatelessWidget {
                                   child: const Text('Submit'),
                                   onPressed: () {
                                     submitForm();
+                                    _formKey.currentState!.reset();
                                     Navigator.of(context).pop();
                                   },
                                 ),
@@ -459,20 +530,6 @@ class EventsRoute extends StatelessWidget {
             ),
             child: const Icon(Icons.add),
           ),
-          // ElevatedButton(
-          //   onPressed: () {
-          //     // Navigate to edit page
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => CreateRoute()),
-          //     );
-          //   },
-          //   child: const Text('Create'),
-          //   style: ButtonStyle(
-          //     backgroundColor: MaterialStateProperty.all<Color>(
-          //         Provider.of<ColorProvider>(context).colorSetting),
-          //   ),
-          // ),
         ],
       )),
     );

@@ -14,3 +14,7 @@ In main.dart, I created multiple providers. So I had to use a multi provider con
 4/30/2023 - Update 2
 Put the list view in a card widget, then added a delete button. Removed the labels for a cleaner view.
 Deleted create.dart since everything can be done in event.dart. Added buttons for deletion and edits. Added creation button below which takes from create.dart setup. Overall simplifying the code
+
+
+5/1/2023
+Added in camera features
